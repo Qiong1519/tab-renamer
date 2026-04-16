@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TabRenamer - 规则管理</title>
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <div class="container">
+    <!-- 头部 -->
+    <header class="header">
+      <div class="header-content">
+        <div class="header-title">
+          <span class="logo">📝</span>
+          <h1>TabRenamer 规则管理</h1>
+        </div>
+        <nav class="nav">
+          <button class="nav-btn active" data-tab="rules">规则列表</button>
+          <button class="nav-btn" data-tab="settings">设置</button>
+        </nav>
+      </div>
+    </header>
+
+    <!-- 主内容 -->
+    <main class="main">
+      <!-- 规则列表页 -->
+      <div id="rulesTab" class="tab-content active">
+        <!-- 工具栏 -->
+        <div class="toolbar">
+          <div class="search-box">
+            <input type="text" id="searchInput" class="input" placeholder="搜索规则...">
+          </div>
+          <button id="createRuleBtn" class="btn btn-primary">
+            <span class="icon">+</span> 创建规则
+          </button>
+        </div>
+
+        <!-- 规则统计 -->
+        <div class="stats">
+          <span id="rulesCount">共 0 条规则</span>
+        </div>
+
+        <!-- 规则列表 -->
+        <div id="rulesList" class="rules-list">
+          <!-- 规则卡片将通过 JS 动态生成 -->
+        </div>
+
+        <!-- 空状态 -->
+        <div id="emptyState" class="empty-state">
+          <div class="empty-icon">📋</div>
+          <p class="empty-text">还没有创建任何规则</p>
+          <p class="empty-desc">点击"创建规则"按钮开始使用</p>
+        </div>
+      </div>
+
+      <!-- 设置页 -->
+      <div id="settingsTab" class="tab-content">
+        <div class="settings-form">
+          <h2 class="section-title">全局设置</h2>
+          
+          <div class="setting-item">
+            <div class="setting-info">
+              <span class="setting-label">启用扩展</span>
+              <span class="setting-desc">全局启用/禁用扩展功能</span>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="settingGlobalEnabled" checked>
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="setting-item">
+            <div class="setting-info">
+              <span class="setting-label">首次使用引导</span>
+              <span class="setting-desc">重新显示首次使用引导</span>
+            </div>
+            <button id="resetGuideBtn" class="btn btn-secondary btn-small">重置引导</button>
+          </div>
+
+          <div class="setting-item">
+            <div class="setting-info">
+              <span class="setting-label">数据管理</span>
+              <span class="setting-desc">导出或清除所有规则数据</span>
+            </div>
+            <div class="button-group">
+              <button id="exportDataBtn" class="btn btn-secondary btn-small">导出数据</button>
+              <button id="clearDataBtn" class="btn btn-danger btn-small">清除数据</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- 规则编辑模态框 -->
+    <div id="ruleModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 id="modalTitle">创建规则</h2>
+          <button id="closeModalBtn" class="close-btn">×</button>
+        </div>
+        
+        <div class="modal-body">
+          <form id="ruleForm">
+            <!-- 规则名称 -->
+            <div class="form-group">
+              <label for="ruleName">规则名称 <span class="required">*</span></label>
+              <input type="text" id="ruleName" class="input" placeholder="例如：GitHub项目" required>
+            </div>
+
+            <!-- 匹配条件 -->
+            <div class="form-section">
+              <h3 class="form-section-title">匹配条件</h3>
+              
+              <div class="form-row">
+                <div class="form-group">
+                  <label>匹配目标</label>
+                  <div class="radio-group">
+                    <label class="radio-label">
+                      <input type="radio" name="matchTarget" value="url" checked>
+                      <span>URL</span>
+                    </label>
+                    <label class="radio-label">
+                      <input type="radio" name="matchTarget" value="title">
+                      <span>标题</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="matchType">匹配方式</label>
+                  <select id="matchType" class="select">
+                    <option value="contains">包含</option>
+                    <option value="equals">等于</option>
+                    <option value="startsWith">开头匹配</option>
+                    <option value="endsWith">结尾匹配</option>
+                    <option value="regex">正则表达式</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="pattern">匹配模式 <span class="required">*</span></label>
+                  <input type="text" id="pattern" class="input" placeholder="例如：github.com" required>
+                  <div id="patternError" class="error-text"></div>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="checkbox-label">
+                    <input type="checkbox" id="caseSensitive">
+                    <span>区分大小写</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- 修改动作 -->
+            <div class="form-section">
+              <h3 class="form-section-title">修改动作</h3>
+              
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="actionType">动作类型</label>
+                  <select id="actionType" class="select">
+                    <option value="prepend">添加前缀</option>
+                    <option value="append">添加后缀</option>
+                    <option value="replace">替换为</option>
+                    <option value="regexReplace">正则替换</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="actionValue">内容 <span class="required">*</span></label>
+                  <input type="text" id="actionValue" class="input" placeholder="例如：[GitHub] " required>
+                  <div class="hint">
+                    支持模板变量: $title $host $domain $url $protocol
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 测试区域 -->
+            <div class="form-section test-section">
+              <h3 class="form-section-title">规则测试</h3>
+              <button type="button" id="testRuleBtn" class="btn btn-secondary btn-block">
+                测试规则
+              </button>
+              <div id="testResult" class="test-result hidden">
+                <div class="result-item">
+                  <span class="result-label">匹配结果:</span>
+                  <span id="testMatched" class="result-value"></span>
+                </div>
+                <div class="result-item">
+                  <span class="result-label">匹配内容:</span>
+                  <span id="testMatchContent" class="result-value"></span>
+                </div>
+                <div class="result-item">
+                  <span class="result-label">原标题:</span>
+                  <span id="testOriginalTitle" class="result-value"></span>
+                </div>
+                <div class="result-item">
+                  <span class="result-label">新标题预览:</span>
+                  <span id="testNewTitle" class="result-value preview-title"></span>
+                </div>
+              </div>
+              <div id="testError" class="error-text hidden"></div>
+            </div>
+          </form>
+        </div>
+
+        <div class="modal-footer">
+          <button id="cancelBtn" class="btn btn-secondary">取消</button>
+          <button id="saveRuleBtn" class="btn btn-primary">保存规则</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast 提示 -->
+    <div id="toast" class="toast hidden"></div>
+  </div>
+
+  <script type="module" src="options.js"></script>
+</body>
+</html>

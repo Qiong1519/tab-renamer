@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TabRenamer</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <!-- 头部 -->
+    <header class="header">
+      <div class="header-title">
+        <span class="logo">📝</span>
+        <h1>TabRenamer</h1>
+      </div>
+      <div class="header-actions">
+        <button id="settingsBtn" class="icon-btn" title="管理规则和设置">
+          <span class="icon">⚙️</span>
+        </button>
+        <label class="switch">
+          <input type="checkbox" id="globalEnabled" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+    </header>
+
+    <!-- 状态提示 -->
+    <div id="statusBar" class="status-bar"></div>
+
+    <!-- 主内容区 -->
+    <main id="mainContent" class="main-content">
+      <!-- 当前标签页信息 -->
+      <section class="section">
+        <h2 class="section-title">当前标签页</h2>
+        <div class="current-tab">
+          <div class="tab-info">
+            <span class="label">原始标题:</span>
+            <span id="originalTitle" class="value truncate">加载中...</span>
+          </div>
+          <div class="tab-info">
+            <span class="label">URL:</span>
+            <span id="currentUrl" class="value truncate">加载中...</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 快速修改 -->
+      <section class="section">
+        <h2 class="section-title">快速修改标题</h2>
+        <div class="form-group">
+          <label for="modifyType">修改方式:</label>
+          <select id="modifyType" class="select">
+            <option value="replace">直接替换</option>
+            <option value="prepend">添加前缀</option>
+            <option value="append">添加后缀</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="newContent">内容:</label>
+          <input type="text" id="newContent" class="input" placeholder="输入新标题或前缀/后缀">
+        </div>
+        
+        <!-- 预览 -->
+        <div class="preview-box">
+          <span class="label">预览效果:</span>
+          <div id="previewText" class="preview-text">-</div>
+        </div>
+
+        <!-- 操作按钮 -->
+        <div class="button-group">
+          <button id="applyBtn" class="btn btn-primary">应用修改</button>
+          <button id="saveAsRuleBtn" class="btn btn-secondary">保存为规则</button>
+        </div>
+      </section>
+
+      <!-- 当前生效规则 -->
+      <section id="activeRuleSection" class="section hidden">
+        <h2 class="section-title">当前生效规则</h2>
+        <div class="active-rule">
+          <div class="rule-name" id="activeRuleName">-</div>
+          <div class="button-group">
+            <button id="viewRulesBtn" class="btn btn-small">查看规则</button>
+            <button id="restoreBtn" class="btn btn-small btn-warning">恢复原标题</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- 页面不支持提示 -->
+    <div id="unsupportedPage" class="unsupported-page hidden">
+      <div class="unsupported-icon">⚠️</div>
+      <p class="unsupported-text">此页面不支持修改标题</p>
+      <p class="unsupported-desc">Chrome内部页面、扩展页面等特殊页面无法修改</p>
+    </div>
+  </div>
+
+  <!-- Toast 提示 -->
+  <div id="toast" class="toast hidden"></div>
+
+  <script type="module" src="popup.js"></script>
+</body>
+</html>

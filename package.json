@@ -1,0 +1,26 @@
+{
+  "name": "tabrenamer",
+  "version": "1.0.0",
+  "description": "智能标签页标题管理工具 - Chrome扩展",
+  "private": true,
+  "scripts": {
+    "generate-icons": "node scripts/generate-icons.js",
+    "build": "node scripts/build.js",
+    "clean": "node scripts/clean.js"
+  },
+  "keywords": [
+    "chrome-extension",
+    "tab",
+    "title",
+    "rename",
+    "productivity"
+  ],
+  "author": "TabRenamer Team",
+  "license": "MIT",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "dependencies": {
+    "sharp": "^0.34.5"
+  }
+}
